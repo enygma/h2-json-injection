@@ -16,9 +16,7 @@ def user():
 
 @app.route("/user/<int:user_id>")
 def userById(user_id):
-    data = readJson()
-    print(data)
-
+    data = parseJson()
     user = findUser(user_id, data)
 
     if user != False:
@@ -28,15 +26,20 @@ def userById(user_id):
 
 @app.route("/save", methods=['POST'])
 def clientSave():
-    data = readJson()
+    data = parseJson()
 
-    if str(request.form['user_id']) != '':
+    if str(request.form['user_id']).isdigit == True:
         for user in data['users']:
             if str(user['id']) == str(request.form['user_id']):
                 user['username'] = request.form['username']
                 user['email'] = request.form['email']
+                user['id'] = request.form['user_id']
     else:
-        id = len(data['users']) + 1
+        if request.form['user_id'] != '':
+            id = request.form['user_id']
+        else:
+            id = len(data['users']) + 1
+
         newUser = {
             "username": request.form['username'],
             "email": request.form['email'],
@@ -48,14 +51,22 @@ def clientSave():
 
     return jsonify({"message":'User data saved!'})
 
+@app.route("/reset")
+def reset():
+    b = open('data/backup.json', 'r')
+    backup = b.read()
+
+    u = open('data/users.json', 'w')
+    u.write(backup)
+
+    return jsonify({"message":'User data reset!'})
+
 ##################################
 ## Helper functions
 def readJson():
     f = open('data/users.json', 'r')
     contents = f.read()
     contents = re.sub('\s{3,}','', contents.strip())
-    # contents = contents.replace('\"','"')
-
     return contents
 
 def parseJson():
