@@ -45,8 +45,18 @@ function loadUser(userId)
         $('#user_id').val(data.id);
     });
 }
+
+// Reset the user list
+function resetUsers()
+{
+    $.getJSON('/reset', function(data) {
+        loadTable();
+        console.log(data);
+    });
+}
 </script>
 
+<button id="btn-reset" class="btn btn-default">Reset Users</button>
 <table class="table table-striped">
     <thead>
         <th>ID</th>
@@ -79,6 +89,7 @@ $(function(){
     loadTable();
 
     $(document).on('click', 'a.user-edit', function(e) {
+        e.preventDefault();
         var userId = $(this).attr('id').replace('user-', '');
         loadUser(userId);
     });
@@ -89,6 +100,10 @@ $(function(){
             loadTable();
         });
     });
+    $('#btn-reset').on('click', function(e) {
+        e.preventDefault();
+        resetUsers();
+    })
 });
 </script>
 
