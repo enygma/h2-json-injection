@@ -75,7 +75,8 @@ def parseJson():
     data = {"users":[]}
 
     result = re.match('\{"users":\[(.+?)\]\}', contents, flags=re.MULTILINE|re.DOTALL)
-    result = result[1][1:len(result[1]) - 1]
+    group = result.group(1)
+    result = group[1:len(group) - 1]
     split = result.split('},{')
 
     for item in split:
@@ -86,9 +87,9 @@ def parseJson():
         i = re.search('"id":(.+?)$', item, flags=re.MULTILINE|re.DOTALL)
         
         user = {
-            "id": int(i[1]),
-            "email": e[1],
-            "username": u[1]
+            "id": int(i.group(1)),
+            "email": e.group(1),
+            "username": u.group(1)
         }
         data['users'].append(user)
 
